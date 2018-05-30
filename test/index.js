@@ -273,6 +273,27 @@ describe('gulp-mongodb-data', function () {
     stream.write(fixture('test/fixtures/customid-test.json'))
     stream.end()
   })
+
+  it("should be able to handle empty collection", function(done) {
+     var db = dbRef.db("nope");
+     var coll = db.collection("empty");
+     var existingUser = { firstName: "David", lastName: "Guetta" };
+
+     coll.insert(existingUser, function() {
+       var stream = mongodbData();
+
+       stream.on("data", function() {
+         coll.count(function(err, count) {
+           if (err) throw err;
+           count.should.eql(0);
+           done();
+         });
+       });
+
+       stream.write(fixture("test/fixtures/empty.json"));
+       stream.end();
+     });
+  });
 })
 
 function fixture (path) {

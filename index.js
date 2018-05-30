@@ -109,7 +109,11 @@ module.exports = function (opts) {
         },
         // Insert dato into collection
         function (cb) {
-          coll.insertMany(json, cb)
+		  if (json.length > 0) {
+		    coll.insertMany(json, cb)
+          } else {
+            cb()
+          }
         }
       ], function (err) {
         db.close()
